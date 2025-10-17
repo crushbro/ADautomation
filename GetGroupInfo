@@ -1,0 +1,29 @@
+# Get AD group members and export name,title,email,phonenumbers address, and office to CSV
+Get-ADGroupMember -Identity "ENTER GROUP YOU WOULD LIKE TO SEARCH HERE" -Recursive |
+    Where-Object { $_.objectClass -eq 'user' } |
+    Get-ADUser -Properties GivenName, Surname, Title, EmailAddress, MobilePhone, TelephoneNumber, Office, StreetAddress, City, State, PostalCode |
+    Select-Object @{
+        Name = 'FirstName'; Expression = { $_.GivenName }
+    }, @{
+        Name = 'LastName'; Expression = { $_.Surname }
+    }, @{
+        Name = 'Title'; Expression = { $_.Title }
+    }, @{
+        Name = 'Email'; Expression = { $_.EmailAddress }
+    }, @{
+        Name = 'MobilePhone'; Expression = { $_.MobilePhone }
+    }, @{
+        Name = 'TelephoneNumber'; Expression = { $_.TelephoneNumber }
+    }, @{
+        Name = 'Location'; Expression = { $_.Office }
+    }, @{
+        Name = 'Street'; Expression = { $_.StreetAddress }
+    }, @{
+        Name = 'City'; Expression = { $_.City }
+    }, @{
+        Name = 'State'; Expression = { $_.State }
+    }, @{
+        Name = 'ZipCode'; Expression = { $_.PostalCode }
+    }, SamAccountName |
+    Export-Csv -Path "ENTERNAMEOFFILEHERE.csv" -NoTypeInformation
+``
