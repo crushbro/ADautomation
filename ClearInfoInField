@@ -1,0 +1,16 @@
+# Import the Active Directory module
+Import-Module ActiveDirectory
+
+# Define the OU distinguished name
+$ouDN = "OU=ENTEROU,OU=ENTEROU,OU=ENTEROU,OU=ENTEROU,DC=ENTERDC,DC=ENTERWANORCOM"
+
+# Get all users in the specified OU
+$users = Get-ADUser -Filter * -SearchBase $ouDN -Properties HomePhone
+
+# Clear information in a specific field, this example is HomePhone field
+foreach ($user in $users) {
+    if ($user.HomePhone) {
+        Write-Host "Clearing HomePhone for user: $($user.SamAccountName)"
+        Set-ADUser -Identity $user -HomePhone $null
+    }
+}
