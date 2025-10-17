@@ -1,0 +1,28 @@
+# Define source and target usernames
+$sourceUser = "existingusersname"
+$newUser = "exampleguy"
+$newName = "Example Guy"
+$newUPN = "$exampleguy@company.com"
+$newPassword = ConvertTo-SecureString "enterthepassword1111" -AsPlainText -Force
+$newTitle = "IT MAN"
+# Get source user info
+$source = Get-ADUser $sourceUser -Properties MemberOf, Department, Title, Office, Path
+
+# Create new user
+New-ADUser `
+    -Name $newName `
+    -SamAccountName $newUser `
+    -UserPrincipalName $newUPN `
+    -AccountPassword $newPassword `
+    -Enabled $true `
+    -Department $source.Department `
+    -Title $newTitle `
+    -Office $source.Office `
+    -Path $source.DistinguishedName.Substring(0, $source.DistinguishedName.IndexOf(",CN=")) # Gets OU
+
+# Copy group memberships
+$groups = $source.MemberOf
+foreach ($group in $groups) {
+    Add-ADGroupMember -Identity $group -Members $newUser
+}
+``
